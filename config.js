@@ -7,5 +7,5 @@ module.exports = {
     port: 5432,
     dialect: "postgres",
   },
-  // jwtSecret: process.env.JWT_SECRET || "secret",
+  jwtSecret: process.env.JWT_SECRET || "secret",
 };
