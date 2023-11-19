@@ -1,62 +1,33 @@
-var categoryService = require("../service/categoryService");
-var categoryValidation = require("./categoryValidation");
+const catagoryService = require("../Services/catagoryService");
+const catchAsyncError = require("../middleware/catchAsyncError");
 
-async function categories(req, res, next) {
-  res.send(await categoryService.getCategory());
-}
+const categories = catchAsyncError(async (req, res, next) => {
+  res.send(await catagoryService.getCategory());
+});
 
-async function addCategory(req, res, next) {
-  try {
-    const { error, value } = categoryValidation.addCategory.validate(req.body);
-    if (error) {
-      return res.send(error.details[0].message);
-    } else {
-      const data = await categoryService.addCategory(value);
-      console.log(data);
-      return res.send(data);
-    }
-  } catch (error) {
-    res.send(error);
-  }
-}
+const addCategory = catchAsyncError(async (req, res, next) => {
+  let data = await req.body;
+  console.log(data);
+  const catagory = catagoryService.addCategory(data);
+  res.send(catagory);
+});
 
-async function updatedCategory(req, res, next) {
-  try {
-    const { error, value } = categoryValidation.updatedCategory.validate(
-      req.body
-    );
-    if (error) {
-      return res.send(error.details[0].message);
-    } else {
-      const categoryId = req.params.id;
-      const updateCategoryData = req.body;
-      const updated = await categoryService.updatedCategory(
-        categoryId,
-        updateCategoryData,
-        value
-      );
-      res.send(updated);
-    }
-  } catch (error) {
-    res.send(error);
-  }
-}
+const updatedCategory = catchAsyncError(async (req, res, next) => {
+  let catagoryId = req.params.catID;
+  let updateCatagoryData = req.body;
+  const data = catagoryService.updatedCategory(catagoryId, updateCatagoryData);
+  // studentService;
+  res.send(data);
+});
 
-async function deleteCategory(req, res, next) {
-  try {
-    const { error, value } = categoryValidation.deleteCategory.validate(
-      req.body
-    );
-    if (error) {
-      return res.send(error.details[0].message);
-    } else {
-      const categoryId = req.params.id;
-      const deleted = await categoryService.deleteCategory(categoryId, value);
-      res.send(deleted);
-    }
-  } catch (error) {
-    res.send(error);
-  }
-}
+const deleteCategory = catchAsyncError(async (req, res, next) => {
+  let catagoryId = req.params.catID;
+  console.log(teacherId);
+  const newData = catagoryService.deleteCategory(catagoryId);
+
+  //   let updateUserData = req.body;
+
+  res.send(newData);
+});
 
 module.exports = { categories, addCategory, updatedCategory, deleteCategory };

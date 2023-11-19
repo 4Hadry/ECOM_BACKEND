@@ -1,23 +1,24 @@
 const userService = require("../Services/userService");
+const catchAsyncError = require("../middleware/catchAsyncError");
 const userValidation = require("./Validation/userValidation");
 
-const MyUser = async (req, res, next) => {
+const MyUser = catchAsyncError(async (req, res, next) => {
   // res.send("UserControler");
   const userData = await userService.getUser();
 
   res.send(userData);
-};
+});
 
 // const userData = (req, res) => {
 //   const user = userService.getUser();
 //   res.send(user);
 // };
-const addUser = async (req, res) => {
+const addUser = catchAsyncError(async (req, res) => {
   const { error, value } = userValidation.createUser.validate(req.body);
   const user = await userService.creatUser(req.body);
   res.send(user);
   return user;
-};
+});
 const UpdateUser = (req, res) => {
   let userId = req.params.Userid;
   let updateUserData = req.body;
