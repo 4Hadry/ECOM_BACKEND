@@ -4,7 +4,7 @@ const database = require("../../Common/dbConnection");
 const cart = database.define(
   "cart",
   {
-    catID: {
+    cartID: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
