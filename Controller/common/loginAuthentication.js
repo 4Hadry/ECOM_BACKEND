@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("../../config");
 const { models } = require("../../models");
+const catchAsyncError = require("../../middleware/catchAsyncError");
 
 let token = [];
 const generateToken = (data) => {
@@ -33,7 +34,7 @@ module.exports = {
     }
   },
 
-  login: async (req, res) => {
+  login: catchAsyncError(async (req, res) => {
     const { email, password } = req.body;
     let user = await models.user.findOne({ where: { email: email } });
     user = user.dataValues;
@@ -45,5 +46,30 @@ module.exports = {
     } else {
       return res.send("Invalid password");
     }
-  },
+  }),
+  register: catchAsyncError(async (req, res) => {
+    const { email, password, name } = req.body;
+
+    // Check if user already exists with the given email
+    const existingUser = await models.user.findOne({ where: { email: email } });
+    if (existingUser) {
+      return res.status(400).send({ message: "Email already exists" });
+    }
+
+    // Create a new user object
+    const newUser = {
+      FirstName,
+      email,
+      password: await bcrypt.hash(password, 10),
+    };
+
+    // Save the new user to the database
+    await models.user.create(newUser);
+
+    // Generate a token for the newly registered user
+    const Token = generateToken({ id: newUser.id });
+
+    // Send the token as response
+    return res.json({ Token: Token });
+  }),
 };

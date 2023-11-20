@@ -20,7 +20,14 @@ exports.getAllProducts = catchAsyncError(async (req, res) => {
     Products,
   });
 });
-
+exports.getSingleProduct = catchAsyncError(async (req, res) => {
+  const productID = req.params.Productid;
+  const Product = await models.products.findByPk(productID);
+  res.status(200).json({
+    success: true,
+    Product,
+  });
+});
 // Update Products
 exports.UpdateProducts = catchAsyncError(async (req, res) => {
   let productID = req.params.Productid;
